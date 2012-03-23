@@ -1,0 +1,187 @@
+" The ArchLinux global vimrc - setting only a few sane defaults
+"
+" Maintainer:      Tobias Kieslich [tobias funnychar archlinux dot org]
+"
+" NEVER EDIT THIS FILE, IT'S OVERWRITTEN UPON UPGRADES, GLOBAL CONFIGURATION
+" SHALL BE DONE IN /etc/vimrc, USER SPECIFIC CONFIGURATION IN ~/.vimrc
+
+" Normally we use vim-extensions. If you want true vi-compatibility
+" remove change the following statements
+set nocompatible                " Use Vim defaults instead of 100% vi compatibility
+set backspace=indent,eol,start  " more powerful backspacing
+
+set autoread
+set number
+set fileformat=unix
+
+syntax on
+colorscheme matrix 
+
+" Включаем "умные" отспупы ( например, автоотступ после {) "
+set smartindent
+
+" Слова (откуда будем завершать) "
+set complete=""
+" Из текущего буфера "
+set complete+=.
+" Из словаря "
+set complete+=k
+" Из других открытых буферов "
+set complete+=b
+" из тегов "
+set complete+=t
+
+"Включаем распознавание типов файлов и типо-специфичные плагины:
+
+filetype on
+
+filetype plugin on
+
+"Настрйока отступов
+set tabstop=8
+set shiftwidth=8
+set smarttab
+
+set smartindent
+set softtabstop=8 "4 пробела в табе
+
+"Автоотступ
+
+"set autoindent 0
+
+"Подсвечиваем все что можно подсвечивать
+
+let python_highlight_all = 1
+
+"Включаем 256 цветов в терминале, мы ведь работаем из иксов?
+
+"Нужно во многих терминалах, например в gnome-terminal
+
+set t_Co=256
+
+
+
+"Настройка omnicomletion для Python (а так же для js, html и css)
+
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+
+
+"Перед сохранением вырезаем пробелы на концах (только в .py файлах)
+
+autocmd BufWritePre *.py normal m`:%s/\s\+$//e ``
+
+"В .py файлах включаем умные отступы после ключевых слов
+
+autocmd BufRead *.py set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
+
+"Авто комплит по табу
+
+function InsertTabWrapper()
+
+ let col = col('.') - 1
+
+ if !col || getline('.')[col - 1] !~ '\k'
+
+ return "\"
+
+ else
+
+ return "\<c-p>"
+
+ endif
+
+endfunction
+
+imap  <c-r>=InsertTabWrapper()"Показываем все полезные опции автокомплита сразу
+
+
+"Вызываем SnippletsEmu(см. дальше в топике) по ctrl-j
+
+"вместо tab по умолчанию (на табе автокомплит)
+
+let g:snippetsEmu_key = "<C-j>"
+
+"Колоночка, чтобы показывать плюсики для скрытия блоков кода:
+
+set foldcolumn=1
+
+"Вырубаем .swp и ~ (резервные) файлы
+
+set nobackup
+
+set noswapfile
+
+set encoding=utf-8 " Кодировка файлов по умолчанию
+
+set fileencodings=utf8,cp1251 " Возможные кодировки файлов, если файл не в unicode кодировке,
+
+" то будет использоваться cp1251
+
+set mouse=a
+map <S-Insert> <MiddleMouse>
+map! <S-Insert> <MiddleMouse>
+
+imap <F2> <Esc>:w<CR>
+map <F2> <Esc>:w<CR>
+
+imap <F3> <Esc>:read 
+map <F3> <Esc>:read
+
+imap <F7> <Esc>:browse tabnew<CR> 
+map <F7> <Esc>:browse tabnew<CR>
+
+imap <F5> <Esc> :tabprev <CR>i
+map <F5> :tabprev <CR>
+
+imap <F6> <Esc> :tabnext <CR>i
+map <F6> :tabnext <CR>
+
+set wildmenu
+set wcm=<Tab>
+menu Exec.bash     :!/bin/bash<CR>
+menu Exec.xterm    :!xterm<CR>
+menu Exec.mc       :!mc<CR>
+menu Exec.xterm_mc :!xterm -e mc<CR>
+map <F9> :emenu Exec.<Tab>
+
+
+set wildmenu
+set wcm=<Tab>
+menu Exit.quit     :quit<CR>
+menu Exit.quit!    :quit!<CR>
+menu Exit.save     :exit<CR>
+map <F10> :emenu Exit.<Tab>
+
+
+" Now we set some defaults for the editor
+set history=50                  " keep 50 lines of command line history
+set ruler                       " show the cursor position all the time
+
+" Suffixes that get lower priority when doing tab completion for filenames.
+" These are files we are not likely to want to edit or read.
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+
+
+if has('gui_running')
+  " Make shift-insert work like in Xterm
+  map <S-Insert> <MiddleMouse>
+  map! <S-Insert> <MiddleMouse>
+endif
+
+function LangPerl()
+
+" включаем все самое умное что есть в perl :)
+setlocal expandtab autoindent smartindent
+" Генерим сtags файл по нажатию F6
+imap  :!find . -type f -name "*.p[ml]" -print0 \| xargs -0 ctags --fields=+iaS --extra=+q .a
+nmap  :!find . -type f -name "*.p[ml]" -print0 \| xargs -0 ctags --fields=+iaS --extra=+q .
+" устанавливаем ограничение на длину строки в 100 символов
+setlocal textwidth=100
+
+endfunction 
